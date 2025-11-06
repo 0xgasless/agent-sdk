@@ -1,0 +1,625 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "_identityRegistry",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "acceptFeedback",
+    "inputs": [
+      {
+        "name": "agentClientId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "agentServerId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getAverageScore",
+    "inputs": [
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getFeedback",
+    "inputs": [
+      {
+        "name": "feedbackId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "feedback",
+        "type": "tuple",
+        "internalType": "struct IReputationRegistry.Feedback",
+        "components": [
+          {
+            "name": "clientId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "serverId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "score",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "dataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "exists",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getFeedbackAuthId",
+    "inputs": [
+      {
+        "name": "agentClientId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "agentServerId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "feedbackAuthId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getReputationStats",
+    "inputs": [
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct IReputationRegistry.ReputationStats",
+        "components": [
+          {
+            "name": "totalFeedback",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "averageScore",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalScore",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lastUpdated",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getScoreWithConfidence",
+    "inputs": [
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getServerFeedbackIds",
+    "inputs": [
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getServerFeedbacks",
+    "inputs": [
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "feedbacks",
+        "type": "tuple[]",
+        "internalType": "struct IReputationRegistry.Feedback[]",
+        "components": [
+          {
+            "name": "clientId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "serverId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "score",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "dataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "exists",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getServerFeedbacksPaginated",
+    "inputs": [
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "offset",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "feedbacks",
+        "type": "tuple[]",
+        "internalType": "struct IReputationRegistry.Feedback[]",
+        "components": [
+          {
+            "name": "clientId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "serverId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "score",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "dataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "exists",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "total",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTotalFeedbackCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "hasFeedbackBeenSubmitted",
+    "inputs": [
+      {
+        "name": "clientId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hasSubmitted",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "identityRegistry",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IIdentityRegistry"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isFeedbackAuthorized",
+    "inputs": [
+      {
+        "name": "agentClientId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "agentServerId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "isAuthorized",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "feedbackAuthId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "revokeFeedback",
+    "inputs": [
+      {
+        "name": "agentClientId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "agentServerId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "submitFeedback",
+    "inputs": [
+      {
+        "name": "clientId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "score",
+        "type": "uint8",
+        "internalType": "uint8"
+      },
+      {
+        "name": "feedbackDataHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "feedbackId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "totalFeedbackCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "version",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "event",
+    "name": "AuthFeedback",
+    "inputs": [
+      {
+        "name": "clientId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "feedbackAuthId",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "FeedbackRevoked",
+    "inputs": [
+      {
+        "name": "clientId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "feedbackAuthId",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "FeedbackSubmitted",
+    "inputs": [
+      {
+        "name": "clientId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "serverId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "feedbackId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "score",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "uint8"
+      },
+      {
+        "name": "dataHash",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AgentNotFound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FeedbackAlreadyAuthorized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FeedbackAlreadySubmitted",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FeedbackNotAuthorized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FeedbackNotFound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidDataHash",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidScore",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "SameAgent",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnauthorizedFeedback",
+    "inputs": []
+  }
+]

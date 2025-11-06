@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/ node_modules/
+
+# Environment files (CONTAINS SECRETS!)
+.env
+.env.local
+.env.*.local
+**/.env
+b402-facilitator/.env
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Deployment artifacts with addresses
+*-deployment.json
+deployment-*.json
+
+# Logs
+*.log
+logs/
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+.claude/
+
+# Test artifacts
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Private keys
+*.key
+*.pem

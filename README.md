@@ -19,12 +19,12 @@ import { AgentSDK } from './dist';
 
 const sdk = new AgentSDK({
   privateKey: process.env.AGENT_PRIVATE_KEY!,
-  defaultNetwork: 'bsc-testnet',
+  defaultNetwork: 'NETWORK_NAME',
   networks: {
-    'bsc-testnet': {
-      name: 'bsc-testnet',
+    'NETWORK_NAME': {
+      name: 'NETWORK_NAME',
       chainId: 97,
-      rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      rpcUrl: 'YOUR_RPC_URL',
       erc8004: {
         identityRegistry: '0x...',
         reputationRegistry: '0x...',
@@ -33,8 +33,8 @@ const sdk = new AgentSDK({
       x402: {
         facilitatorUrl: 'https://facilitator.example.com',
         defaultToken: '0xUSDT',
-        domainName: 'B402',
-        domainVersion: '1'
+        domainName: 'YOUR_DOMAIN_NAME',
+        domainVersion: 'YOUR_DOMAIN_VERSION'
       }
     }
   }

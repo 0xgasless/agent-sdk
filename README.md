@@ -1,8 +1,25 @@
 # Agent SDK (ERC-8004 + x402)
 
-A universal, chain-agnostic SDK that combines:
-- ERC-8004 identity/reputation/validation for agents
-- x402 gasless payments via any compatible facilitator
+A universal, chain-agnostic TypeScript SDK for building trustless blockchain agents.
+
+**0xgasless/agent-sdk** provides a powerful toolkit for developers looking to integrate the latest standards in agent identity, reputation management, and validation (ERC-8004), combined with seamless, gasless payments via the x402 protocol.
+
+## About
+
+The Agent SDK abstracts the complexities of agent management and value transfer—making it easy to build, register, and empower autonomous agents that can securely interact, prove credentials, and transact across EVM-based blockchains.
+
+**Key highlights:**
+- **Agent Identity & Trust:** Leverage ERC-8004 registries to assign, verify, and manage unique agent identities, reputation scores, and validation attributes.
+- **Gasless Payments:** Integrate x402 protocol for crypto payments routed via third-party facilitators, letting agents interact with paywalled APIs and services with no up-front gas costs.
+- **Chain Agnostic:** Works on any EVM-compatible network—just provide the network configuration.
+- **Pluggable & Extensible:** Easily swap out network, registry, or facilitator configs without changing your code.
+
+## Features
+
+- **ERC-8004 Identity Registry:** Register, update, and verify agent credentials and reputation.
+- **Validation Workflows:** Use standardized validation flows for agent actions and claims.
+- **x402 Payment Integration:** Make payments to supported APIs and on-chain services using the x402 facilitator network.
+- **Unified API Interface:** All interactions via a single, strongly-typed TypeScript SDK.
 
 ## Install
 
@@ -10,46 +27,3 @@ A universal, chain-agnostic SDK that combines:
 cd agent-sdk
 npm install
 npm run build
-```
-
-## Quick Start
-
-```ts
-import { AgentSDK } from './dist';
-
-const sdk = new AgentSDK({
-  privateKey: process.env.AGENT_PRIVATE_KEY!,
-  defaultNetwork: 'NETWORK_NAME',
-  networks: {
-    'NETWORK_NAME': {
-      name: 'NETWORK_NAME',
-      chainId: 97,
-      rpcUrl: 'YOUR_RPC_URL',
-      erc8004: {
-        identityRegistry: '0x...',
-        reputationRegistry: '0x...',
-        validationRegistry: '0x...'
-      },
-      x402: {
-        facilitatorUrl: 'https://facilitator.example.com',
-        defaultToken: '0xUSDT',
-        domainName: 'YOUR_DOMAIN_NAME',
-        domainVersion: 'YOUR_DOMAIN_VERSION'
-      }
-    }
-  }
-});
-
-// ERC-8004: register an agent
-await sdk.erc8004.identity().registerAgent('ipfs://agent-card.json');
-
-// x402-aware fetch
-const res = await sdk.fetch('https://paid-api.example.com/data');
-```
-
-## Notes
-- Replace placeholder ERC-8004 ABIs with your deployed registries.
-- Works with any x402-compatible facilitator by URL.
-- Fully chain-agnostic via network configuration.
-
-

@@ -1,0 +1,19 @@
+{
+    "name": "moltpay",
+    "version": "0.1.0",
+    "description": "Payment and wallet capabilities for AI agents",
+    "author": "0xGasless",
+    "skills": [
+        "./SKILL.md"
+    ],
+    "requires": {
+        "binaries": [
+            "moltpay"
+        ],
+        "env": [
+            "PRIVATE_KEY"
+        ]
+    },
+    "homepage": "https://0xgasless.com",
+    "repository": "https://github.com/0xgasless/agent-sdk"
+}

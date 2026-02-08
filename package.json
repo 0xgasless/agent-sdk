@@ -1,17 +1,35 @@
 {
-  "name": "agent-sdk",
-  "version": "0.1.0",
+  "name": "@0xgasless/agent-sdk",
+  "version": "0.1.1-dev",
   "description": "Universal Agent SDK combining ERC-8004 identity/reputation with x402 gasless payments across chains",
   "main": "dist/index.js",
+  "module": "dist/index.js",
+  "bin": {
+    "moltpay": "./dist/cli/index.js"
+  },
+  "type": "module",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./fuji-config": {
+      "types": "./dist/fuji-config.d.ts",
+      "import": "./dist/fuji-config.js"
+    }
+  },
   "files": [
     "dist",
-    "README.md"
+    "!dist/examples",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
+    "build:cli": "tsup src/cli/index.ts --format esm --out-dir dist/cli --clean --platform node --external dotenv",
     "dev": "tsc --watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run build:cli"
   },
   "keywords": [
     "erc8004",
@@ -23,12 +41,23 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@langchain/core": "^1.1.18",
+    "@langchain/langgraph": "^1.1.2",
+    "@privy-io/server-auth": "^1.32.5",
     "axios": "^1.7.7",
-    "ethers": "^6.15.0"
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.0.0",
+    "inquirer": "^13.2.2",
+    "ora": "^9.1.0"
+  },
+  "peerDependencies": {
+    "ethers": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "dotenv": "^17.2.3",
+    "tsup": "^8.5.1",
     "typescript": "^5"
   },
   "engines": {

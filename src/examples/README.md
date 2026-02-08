@@ -1,68 +1,141 @@
-# AgentSDK Examples
+# Agent SDK Examples
 
-This directory contains example configurations and usage patterns for the AgentSDK.
+This directory contains example implementations showing how to use the Agent SDK with different wallet providers.
 
-## Files
+## Available Examples
 
-- **`fuji.config.ts`** - Configuration for Avalanche Fuji testnet with deployed contract addresses
-- **`complete-example.ts`** - Comprehensive example showing all SDK features
-- **`avalanche.config.ts`** - Configuration template for Avalanche mainnet
+### Core Examples (No Additional Dependencies)
 
-## Quick Start
+1. **`with-ethers.ts`** ✅
+   - Basic usage with ethers.js Wallet
+   - No additional dependencies
+   - Works in Node.js or browser
 
-### 1. Set Environment Variables
+2. **`with-session-keys.ts`** ✅
+   - Session key pattern with **in-memory storage**
+   - Good for development/testing
+   - ⚠️ **For production, use `with-session-keys-database.ts`**
+
+3. **`with-session-keys-database.ts`** ✅ **NEW!**
+   - Session key pattern with **real database** (SQLite/PostgreSQL)
+   - Production-ready
+   - Includes encryption
+   - Daily spend tracking
+   - See `DATABASE_SETUP_GUIDE.md` for setup
+
+4. **`fetchai-integration.ts`** ✅
+   - Fetch.ai ASI integration example
+   - Shows automatic payment handling
+
+### React Examples (Require Additional Dependencies)
+
+These examples are for reference and require additional packages:
+
+5. **`with-privy.tsx`** 📝
+   - Requires: `@privy-io/react-auth`
+   - Shows Privy integration
+   - React component example
+
+6. **`with-dynamic.tsx`** 📝
+   - Requires: `@dynamic-labs/sdk-react-core`
+   - Shows Dynamic.xyz integration
+   - React component example
+
+7. **`with-metamask.tsx`** 📝
+   - Requires: MetaMask browser extension
+   - Shows MetaMask integration
+   - React component example
+
+---
+
+## 🗄️ Database Setup for Session Keys
+
+### Quick Answer
+
+**You DON'T need a database if:**
+- Using `with-session-keys.ts` (in-memory storage)
+- Just testing/developing
+- Single-user scenario
+
+**You DO need a database if:**
+- Using `with-session-keys-database.ts`
+- Production deployment
+- Multiple users
+- Need persistence
+
+### Setup Options
+
+1. **SQLite (Easiest - No Setup)**
+   ```bash
+   npm install better-sqlite3
+   # That's it! No database server needed
+   ```
+
+2. **PostgreSQL (Production)**
+   ```bash
+   # Install PostgreSQL
+   brew install postgresql
+   createdb agent_sdk_db
+   
+   # Install Prisma
+   npm install prisma @prisma/client
+   npx prisma init
+   # Follow DATABASE_SETUP_GUIDE.md
+   ```
+
+See `DATABASE_SETUP_GUIDE.md` for complete instructions.
+
+---
+
+## Running Examples
+
+### TypeScript Examples (Node.js)
 
 ```bash
-export PRIVATE_KEY=your_private_key_here
-export X402_FACILITATOR_URL=https://your-facilitator-url.com
-export DEFAULT_TOKEN=0x5425890298aed601595a70AB815c96711a31Bc65  # USDC.e on Fuji
-```
-
-### 2. Update ERC-8004 Client ABIs
-
-The ERC-8004 clients currently use placeholder ABIs. You need to update them with the actual contract ABIs:
-
-- `src/erc8004/identity.ts` - Update with IdentityRegistry ABI
-- `src/erc8004/reputation.ts` - Update with ReputationRegistry ABI  
-- `src/erc8004/validation.ts` - Update with ValidationRegistry ABI
-
-You can extract the ABIs from the deployed contracts or use the interfaces from `agent-sdk-contracts/contracts/interfaces/`.
-
-### 3. Run the Example
-
-```bash
+# Install dependencies
 cd agent-sdk
 npm install
-npx ts-node src/examples/complete-example.ts
+
+# For in-memory storage (no database)
+npx ts-node src/examples/with-session-keys.ts
+
+# For database storage (requires database setup)
+npx ts-node src/examples/with-session-keys-database.ts
 ```
 
-## Deployed Contracts (Fuji Testnet)
+### React Examples
 
-- **IdentityRegistry**: `0x96eF5c6941d5f8dfB4a39F44E9238b85F01F4d29`
-- **ReputationRegistry**: `0xDC61Ea0B4DC6f156F72b62e59860303a4753033F`
-- **ValidationRegistry**: `0x467363Bd781AbbABB089161780649C86F6B0271B`
+React examples are provided for reference. To use them:
 
-## x402 Configuration
+1. Install required dependencies:
+   ```bash
+   npm install @privy-io/react-auth  # For Privy example
+   npm install @dynamic-labs/sdk-react-core  # For Dynamic example
+   ```
 
-The x402 EIP-712 domain for Avalanche:
-- **name**: "A402"
-- **version**: "1"
-- **chainId**: 43113 (Fuji) or 43114 (Mainnet)
-- **verifyingContract**: `0x82b52a3dA9aE38eaaEC63ffAD29cAF379339f482`
+2. Copy the example to your React app
+3. Update imports and configuration
 
-## Features Demonstrated
+---
 
-1. **Agent Registration** - Register an agent with ERC-8004 Identity Registry
-2. **Gasless Payments** - Make payments using x402 protocol
-3. **Reputation** - Submit and manage feedback
-4. **Validation** - Stake as validator and handle validation requests
-5. **HTTP Requests** - Use x402Fetch for gasless API calls
+## 📝 Which Example Should I Use?
 
-## Next Steps
+### For Development/Testing:
+- ✅ `with-ethers.ts` - Simple wallet
+- ✅ `with-session-keys.ts` - Session keys with in-memory storage
 
-1. Update the ABIs in the ERC-8004 clients
-2. Set up or connect to an x402 facilitator
-3. Deploy or use an existing x402 relayer contract
-4. Test with real transactions on Fuji testnet
-5. Deploy to mainnet when ready
+### For Production:
+- ✅ `with-session-keys-database.ts` - Session keys with database
+- ✅ See `DATABASE_SETUP_GUIDE.md` for database setup
 
+### For React Apps:
+- ✅ `with-privy.tsx` - If using Privy
+- ✅ `with-dynamic.tsx` - If using Dynamic.xyz
+- ✅ `with-metamask.tsx` - If using MetaMask
+
+---
+
+## Note
+
+The SDK itself is **wallet-agnostic** and doesn't require any of these wallet libraries or databases.
+These examples just show how to adapt different wallets and storage solutions to work with the SDK.

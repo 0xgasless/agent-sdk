@@ -2,15 +2,35 @@ import { Contract, JsonRpcProvider, Wallet, ContractTransactionResponse } from '
 import { NetworkConfig } from '../types';
 import ValidationRegistryABI from './abis/ValidationRegistry.json';
 
-export interface ValidatorInfo {
-  stakedAmount: string;
-  lockedAmount: string;
-  totalValidations: string;
-  totalSlashed: string;
-  isActive: boolean;
+/**
+ * Economic models for v0.2 validators
+ */
+export enum EconomicModel {
+  STAKE_BASED = 0,
+  REPUTATION_BASED = 1,
+  HYBRID = 2,
+  PERMISSIONLESS = 3,
 }
 
-export interface ValidationRequest {
+/**
+ * Validator info for v0.2
+ */
+/**
+ * Validator info for v0.2
+ */
+export interface ValidatorInfoV2 {
+  stakedAmount: string;
+  lockedAmount: string;
+  totalValidations: number;
+  totalSlashed: string;
+  isActive: boolean;
+  // economicModel removed as it's not in the ABI
+}
+
+/**
+ * Validation request for v0.2
+ */
+export interface ValidationRequestV2 {
   agentValidatorId: string;
   agentServerId: string;
   dataHash: string;
@@ -19,7 +39,11 @@ export interface ValidationRequest {
   reward: string;
 }
 
-export class ValidationRegistryClient {
+/**
+ * v0.2 Validation Registry Client
+ * Uses stake-based validation with slashing (UUPS upgradeable)
+ */
+export class ValidationRegistryClientV2 {
   private readonly contract: Contract;
 
   constructor(network: NetworkConfig, signerOrProvider: Wallet | JsonRpcProvider) {
@@ -30,21 +54,25 @@ export class ValidationRegistryClient {
   }
 
   /**
-   * Stake ETH to become or remain an active validator
+   * Stake as a validator (official ERC-8004 interface)
    * @param validatorId Token ID of the validator agent
-   * @param overrides Optional transaction overrides (e.g., value for stake amount)
-   * @returns Transaction hash
+   * @param overrides Transaction overrides (value = stake amount)
+   * @returns Transaction response
    */
-  async stakeAsValidator(validatorId: string | number, overrides?: { value?: bigint }): Promise<ContractTransactionResponse> {
+  async stakeAsValidator(
+    validatorId: string | number,
+    overrides?: { value?: bigint }
+  ): Promise<ContractTransactionResponse> {
+    // ABI: stakeAsValidator(uint256 validatorId)
     const tx = await this.contract.stakeAsValidator(validatorId, overrides || {});
     return tx;
   }
 
   /**
-   * Unstake ETH from validator stake
+   * Unstake from validator
    * @param validatorId Token ID of the validator agent
    * @param amount Amount to unstake
-   * @returns Transaction hash
+   * @returns Transaction response
    */
   async unstake(validatorId: string | number, amount: bigint): Promise<ContractTransactionResponse> {
     const tx = await this.contract.unstake(validatorId, amount);
@@ -52,42 +80,44 @@ export class ValidationRegistryClient {
   }
 
   /**
-   * Request validation from a validator agent
-   * @param validatorId Token ID of the validator agent
-   * @param serverId Token ID of the server agent (must be caller)
-   * @param dataHash Hash of data to validate
-   * @param overrides Optional transaction overrides (e.g., value for reward)
-   * @returns Transaction hash
+   * Create a validation request
+   * @param validatorId Token ID of the validator
+   * @param agentId Token ID of the agent to validate (server)
+   * @param dataHash Hash of the data to validate
+   * @param overrides Transaction overrides (value = reward)
+   * @returns Transaction response
    */
-  async validationRequest(
+  async requestValidation(
     validatorId: string | number,
-    serverId: string | number,
+    agentId: string | number,
     dataHash: string,
     overrides?: { value?: bigint }
   ): Promise<ContractTransactionResponse> {
-    const tx = await this.contract.validationRequest(validatorId, serverId, dataHash, overrides || {});
+    // ABI: validationRequest(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash)
+    const tx = await this.contract.validationRequest(validatorId, agentId, dataHash, overrides || {});
     return tx;
   }
 
   /**
    * Submit validation response
-   * @param dataHash Hash of data being validated
-   * @param response Validation score (0-100)
-   * @returns Transaction hash
+   * @param dataHash The hash of the data being validated (acts as request ID)
+   * @param score Validation score/response (uint8)
+   * @returns Transaction response
    */
-  async validationResponse(dataHash: string, response: number): Promise<ContractTransactionResponse> {
-    if (response < 0 || response > 100) {
-      throw new Error('Response must be between 0 and 100');
-    }
-    const tx = await this.contract.validationResponse(dataHash, response);
+  async validationResponse(
+    dataHash: string,
+    score: number
+  ): Promise<ContractTransactionResponse> {
+    // ABI: validationResponse(bytes32 dataHash, uint8 response)
+    const tx = await this.contract.validationResponse(dataHash, score);
     return tx;
   }
 
   /**
-   * Slash validator stake for non-response
-   * @param validatorId Token ID of the validator agent
-   * @param dataHash Hash of the expired validation request
-   * @returns Transaction hash
+   * Slash validator for non-response
+   * @param validatorId Token ID of the validator
+   * @param dataHash The data hash of the expired request
+   * @returns Transaction response
    */
   async slashValidator(validatorId: string | number, dataHash: string): Promise<ContractTransactionResponse> {
     const tx = await this.contract.slashValidator(validatorId, dataHash);
@@ -95,12 +125,30 @@ export class ValidationRegistryClient {
   }
 
   /**
-   * Get validation request details
-   * @param dataHash Hash of the validation request
-   * @returns The validation request struct
+   * Get validator information
+   * @param validatorId Token ID of the validator
+   * @returns Validator info
    */
-  async getValidationRequest(dataHash: string): Promise<ValidationRequest> {
+  async getValidatorInfo(validatorId: string | number): Promise<ValidatorInfoV2> {
+    const info = await this.contract.getValidatorInfo(validatorId);
+    return {
+      stakedAmount: info[0].toString(),
+      lockedAmount: info[1].toString(),
+      totalValidations: Number(info[2]),
+      totalSlashed: info[3].toString(),
+      isActive: info[4],
+    };
+  }
+
+  /**
+   * Get validation request details
+   * @param dataHash The data hash
+   * @returns Request details
+   */
+  async getValidationRequest(dataHash: string): Promise<ValidationRequestV2> {
     const req = await this.contract.getValidationRequest(dataHash);
+    // ABI return: tuple(uint256 agentValidatorId, uint256 agentServerId, bytes32 dataHash, uint256 timestamp, bool responded, uint256 reward)
+    // Note: The structure returned by ethers might vary (array or object)
     return {
       agentValidatorId: req[0].toString(),
       agentServerId: req[1].toString(),
@@ -113,7 +161,7 @@ export class ValidationRegistryClient {
 
   /**
    * Check if validation is pending
-   * @param dataHash Hash of the validation request
+   * @param dataHash The data hash
    * @returns Object with exists and pending flags
    */
   async isValidationPending(dataHash: string): Promise<{ exists: boolean; pending: boolean }> {
@@ -126,8 +174,8 @@ export class ValidationRegistryClient {
 
   /**
    * Get validation response
-   * @param dataHash Hash of the validation request
-   * @returns Object with hasResponse flag and response score
+   * @param dataHash The data hash
+   * @returns Response details
    */
   async getValidationResponse(dataHash: string): Promise<{ hasResponse: boolean; response: number }> {
     const res = await this.contract.getValidationResponse(dataHash);
@@ -138,89 +186,47 @@ export class ValidationRegistryClient {
   }
 
   /**
-   * Get validator information
-   * @param validatorId Token ID of the validator agent
-   * @returns Validator information struct
-   */
-  async getValidatorInfo(validatorId: string | number): Promise<ValidatorInfo> {
-    const info = await this.contract.getValidatorInfo(validatorId);
-    return {
-      stakedAmount: info[0].toString(),
-      lockedAmount: info[1].toString(),
-      totalValidations: info[2].toString(),
-      totalSlashed: info[3].toString(),
-      isActive: info[4],
-    };
-  }
-
-  /**
-   * Get validator's active requests
-   * @param validatorId Token ID of the validator agent
-   * @returns Array of active request hashes
-   */
-  async getValidatorActiveRequests(validatorId: string | number): Promise<string[]> {
-    const requests = await this.contract.getValidatorActiveRequests(validatorId);
-    return requests.map((hash: string) => hash);
-  }
-
-  /**
-   * Check if validator is active
-   * @param validatorId Token ID of the validator agent
-   * @returns True if validator is active
-   */
-  async isValidatorActive(validatorId: string | number): Promise<boolean> {
-    return await this.contract.isValidatorActive(validatorId);
-  }
-
-  /**
-   * Get validator stake amounts
-   * @param validatorId Token ID of the validator agent
-   * @returns Object with staked, locked, and available amounts
-   */
-  async getValidatorStake(
-    validatorId: string | number
-  ): Promise<{ staked: string; locked: string; available: string }> {
-    const res = await this.contract.getValidatorStake(validatorId);
-    return {
-      staked: res[0].toString(),
-      locked: res[1].toString(),
-      available: res[2].toString(),
-    };
-  }
-
-  /**
-   * Get expiration window in blocks
-   * @returns Number of blocks before expiration
-   */
-  async getExpirationSlots(): Promise<number> {
-    const slots = await this.contract.getExpirationSlots();
-    return Number(slots);
-  }
-
-  /**
    * Get minimum validator stake
-   * @returns Minimum stake required
+   * @returns Minimum stake in wei
    */
   async getMinValidatorStake(): Promise<string> {
+    // ABI: MIN_VALIDATOR_STAKE() view returns (uint256)
+    // Note: The ABI shows MIN_VALIDATOR_STAKE (caps) and getMinValidatorStake (pure).
+    // Reviewing ABI... line 80: getMinValidatorStake. line 41: MIN_VALIDATOR_STAKE.
+    // Let's use getMinValidatorStake as it's a standard getter pattern
     const stake = await this.contract.getMinValidatorStake();
     return stake.toString();
   }
 
   /**
-   * Get total staked amount
-   * @returns Total ETH staked by all validators
+   * Get slash percentage
+   * @returns Slash percentage (0-100)
    */
-  async getTotalStaked(): Promise<string> {
-    const total = await this.contract.getTotalStaked();
-    return total.toString();
+  async getSlashPercentage(): Promise<number> {
+    // ABI: SLASH_PERCENTAGE() view returns (uint256)
+    // Does ABI have getSlashPercentage? No.
+    // It has SLASH_PERCENTAGE.
+    const pct = await this.contract.SLASH_PERCENTAGE();
+    return Number(pct);
   }
 
   /**
-   * Get total number of validations completed
-   * @returns Total validations
+   * Get expiration blocks
+   * @returns Number of blocks/slots before request expires
    */
-  async getTotalValidations(): Promise<number> {
-    const count = await this.contract.getTotalValidations();
-    return Number(count);
+  async getExpirationSlots(): Promise<number> {
+    // ABI: getExpirationSlots
+    const slots = await this.contract.getExpirationSlots();
+    return Number(slots);
+  }
+
+  /**
+   * Get the raw contract instance for advanced usage
+   */
+  getContract(): Contract {
+    return this.contract;
   }
 }
+
+// Re-export for convenience
+export { ValidationRegistryClientV2 as ValidationV2 };

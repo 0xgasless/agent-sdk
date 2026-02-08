@@ -2,23 +2,25 @@ import { Contract, JsonRpcProvider, Wallet, ContractTransactionResponse } from '
 import { NetworkConfig } from '../types';
 import ReputationRegistryABI from './abis/ReputationRegistry.json';
 
-export interface ReputationStats {
-  totalFeedback: string;
-  averageScore: string;
-  totalScore: string;
-  lastUpdated: string;
+/**
+ * Feedback entry for v0.2 (official ERC-8004)
+ */
+export interface FeedbackV2 {
+  value: bigint;
+  valueDecimals: number;
+  tag1: string;
+  tag2: string;
+  endpoint: string;
+  feedbackURI: string;
+  feedbackHash: string;
+  isRevoked: boolean;
 }
 
-export interface Feedback {
-  clientId: string;
-  serverId: string;
-  score: number;
-  dataHash: string;
-  timestamp: string;
-  exists: boolean;
-}
-
-export class ReputationRegistryClient {
+/**
+ * v0.2 Reputation Registry Client
+ * Uses official ERC-8004 interface (UUPS upgradeable)
+ */
+export class ReputationRegistryClientV2 {
   private readonly contract: Contract;
 
   constructor(network: NetworkConfig, signerOrProvider: Wallet | JsonRpcProvider) {
@@ -29,219 +31,224 @@ export class ReputationRegistryClient {
   }
 
   /**
-   * Server agent authorizes a client agent to submit feedback
-   * @param clientId Token ID of the client agent
-   * @param serverId Token ID of the server agent (must be caller)
-   * @returns Transaction hash
+   * Give feedback for an agent (official ERC-8004 interface)
+   * @param agentId Token ID of the agent
+   * @param value Feedback value (signed fixed-point)
+   * @param valueDecimals Decimals for the value
+   * @param tag1 Optional tag for filtering
+   * @param tag2 Optional tag for filtering
+   * @param endpoint Optional endpoint
+   * @param feedbackURI URI to detailed feedback
+   * @param feedbackHash Hash of the feedback data
+   * @returns Transaction response
    */
-  async acceptFeedback(clientId: string | number, serverId: string | number): Promise<ContractTransactionResponse> {
-    const tx = await this.contract.acceptFeedback(clientId, serverId);
+  async giveFeedback(
+    agentId: string | number,
+    value: bigint,
+    valueDecimals: number,
+    tag1: string = '',
+    tag2: string = '',
+    endpoint: string = '',
+    feedbackURI: string = '',
+    feedbackHash: string = '0x0000000000000000000000000000000000000000000000000000000000000000'
+  ): Promise<ContractTransactionResponse> {
+    const tx = await this.contract.giveFeedback(
+      agentId,
+      value,
+      valueDecimals,
+      tag1,
+      tag2,
+      endpoint,
+      feedbackURI,
+      feedbackHash
+    );
     return tx;
   }
 
   /**
-   * Server agent revokes feedback authorization
-   * @param clientId Token ID of the client agent
-   * @param serverId Token ID of the server agent (must be caller)
-   * @returns Transaction hash
+   * Revoke feedback
+   * @param agentId Token ID of the agent
+   * @param feedbackIndex Index of the feedback to revoke
+   * @returns Transaction response
    */
-  async revokeFeedback(clientId: string | number, serverId: string | number): Promise<ContractTransactionResponse> {
-    const tx = await this.contract.revokeFeedback(clientId, serverId);
+  async revokeFeedback(
+    agentId: string | number,
+    feedbackIndex: number
+  ): Promise<ContractTransactionResponse> {
+    const tx = await this.contract.revokeFeedback(agentId, feedbackIndex);
     return tx;
   }
 
   /**
-   * Client agent submits feedback for a server agent
-   * @param clientId Token ID of the client agent (must be caller)
-   * @param serverId Token ID of the server agent
-   * @param score Score from 0-100
-   * @param dataHash Hash of detailed feedback (IPFS CID, etc.)
-   * @returns Feedback ID
+   * Append response to feedback
+   * @param agentId Token ID of the agent
+   * @param clientAddress Address of the feedback giver
+   * @param feedbackIndex Index of the feedback
+   * @param responseURI URI to the response
+   * @param responseHash Hash of the response data
+   * @returns Transaction response
    */
-  async submitFeedback(
-    clientId: string | number,
-    serverId: string | number,
-    score: number,
-    dataHash: string
-  ): Promise<string> {
-    if (score < 0 || score > 100) {
-      throw new Error('Score must be between 0 and 100');
-    }
-    const tx = await this.contract.submitFeedback(clientId, serverId, score, dataHash);
-    const receipt = await tx.wait();
-    // Extract feedback ID from events
-    const event = receipt.logs.find((log: any) => {
-      try {
-        const parsed = this.contract.interface.parseLog(log);
-        return parsed?.name === 'FeedbackSubmitted';
-      } catch {
-        return false;
-      }
-    });
-    if (event) {
-      const parsed = this.contract.interface.parseLog(event);
-      return parsed?.args[2]?.toString() || tx.hash;
-    }
-    return tx.hash;
+  async appendResponse(
+    agentId: string | number,
+    clientAddress: string,
+    feedbackIndex: number,
+    responseURI: string,
+    responseHash: string
+  ): Promise<ContractTransactionResponse> {
+    const tx = await this.contract.appendResponse(
+      agentId,
+      clientAddress,
+      feedbackIndex,
+      responseURI,
+      responseHash
+    );
+    return tx;
   }
 
   /**
-   * Check if feedback is authorized
-   * @param clientId Token ID of the client agent
-   * @param serverId Token ID of the server agent
-   * @returns Object with isAuthorized flag and feedbackAuthId
+   * Read a specific feedback entry
+   * @param agentId Token ID of the agent
+   * @param clientAddress Address of the feedback giver
+   * @param feedbackIndex Index of the feedback
+   * @returns Feedback data
    */
-  async isFeedbackAuthorized(
-    clientId: string | number,
-    serverId: string | number
-  ): Promise<{ isAuthorized: boolean; feedbackAuthId: string }> {
-    const res = await this.contract.isFeedbackAuthorized(clientId, serverId);
+  async readFeedback(
+    agentId: string | number,
+    clientAddress: string,
+    feedbackIndex: number
+  ): Promise<{ value: bigint; valueDecimals: number; tag1: string; tag2: string; isRevoked: boolean }> {
+    const res = await this.contract.readFeedback(agentId, clientAddress, feedbackIndex);
     return {
-      isAuthorized: res[0],
-      feedbackAuthId: res[1],
+      value: res[0],
+      valueDecimals: Number(res[1]),
+      tag1: res[2],
+      tag2: res[3],
+      isRevoked: res[4],
     };
   }
 
   /**
-   * Get feedback authorization ID
-   * @param clientId Token ID of the client agent
-   * @param serverId Token ID of the server agent
-   * @returns The authorization ID (bytes32(0) if not authorized)
+   * Get aggregated summary for an agent
+   * @param agentId Token ID of the agent
+   * @param clientAddresses Array of client addresses to include
+   * @param tag1 Filter by tag1
+   * @param tag2 Filter by tag2
+   * @returns Summary with count, value sum, and decimals
    */
-  async getFeedbackAuthId(clientId: string | number, serverId: string | number): Promise<string> {
-    return await this.contract.getFeedbackAuthId(clientId, serverId);
-  }
-
-  /**
-   * Check if client has already submitted feedback
-   * @param clientId Token ID of the client agent
-   * @param serverId Token ID of the server agent
-   * @returns True if feedback already submitted
-   */
-  async hasFeedbackBeenSubmitted(clientId: string | number, serverId: string | number): Promise<boolean> {
-    return await this.contract.hasFeedbackBeenSubmitted(clientId, serverId);
-  }
-
-  /**
-   * Get a specific feedback entry
-   * @param feedbackId The unique feedback identifier
-   * @returns The feedback struct
-   */
-  async getFeedback(feedbackId: string): Promise<Feedback> {
-    const res = await this.contract.getFeedback(feedbackId);
+  async getSummary(
+    agentId: string | number,
+    clientAddresses: string[] = [],
+    tag1: string = '',
+    tag2: string = ''
+  ): Promise<{ count: number; summaryValue: bigint; summaryValueDecimals: number }> {
+    const res = await this.contract.getSummary(agentId, clientAddresses, tag1, tag2);
     return {
-      clientId: res[0].toString(),
-      serverId: res[1].toString(),
-      score: Number(res[2]),
-      dataHash: res[3],
-      timestamp: res[4].toString(),
-      exists: res[5],
+      count: Number(res[0]),
+      summaryValue: res[1],
+      summaryValueDecimals: Number(res[2]),
     };
   }
 
   /**
-   * Get all feedback IDs for a server agent
-   * @param serverId Token ID of the server agent
-   * @returns Array of feedback IDs
+   * Get the Identity Registry address
+   * @returns The Identity Registry contract address
    */
-  async getServerFeedbackIds(serverId: string | number): Promise<string[]> {
-    const ids = await this.contract.getServerFeedbackIds(serverId);
-    return ids.map((id: string) => id);
+  async getIdentityRegistry(): Promise<string> {
+    return await this.contract.getIdentityRegistry();
   }
 
   /**
-   * Get all feedback entries for a server agent
-   * @param serverId Token ID of the server agent
-   * @returns Array of feedback structs
+   * Get the last feedback index for a specific client
+   * @param agentId Token ID of the agent
+   * @param clientAddress Address of the client
+   * @returns Last feedback index (0 if none)
    */
-  async getServerFeedbacks(serverId: string | number): Promise<Feedback[]> {
-    const feedbacks = await this.contract.getServerFeedbacks(serverId);
-    return feedbacks.map((f: any) => ({
-      clientId: f[0].toString(),
-      serverId: f[1].toString(),
-      score: Number(f[2]),
-      dataHash: f[3],
-      timestamp: f[4].toString(),
-      exists: f[5],
-    }));
+  async getLastIndex(agentId: string | number, clientAddress: string): Promise<bigint> {
+    return await this.contract.getLastIndex(agentId, clientAddress);
   }
 
   /**
-   * Get paginated feedback for a server agent
-   * @param serverId Token ID of the server agent
-   * @param offset Starting index
-   * @param limit Number of entries to return
-   * @returns Object with feedbacks array and total count
+   * Read all feedback matching criteria
+   * @param agentId Token ID of the agent
+   * @param clientAddresses List of clients (empty for all known clients)
+   * @param tag1 Filter by tag1
+   * @param tag2 Filter by tag2
+   * @param includeRevoked Include revoked feedback
+   * @returns Arrays of feedback data
    */
-  async getServerFeedbacksPaginated(
-    serverId: string | number,
-    offset: number,
-    limit: number
-  ): Promise<{ feedbacks: Feedback[]; total: number }> {
-    const res = await this.contract.getServerFeedbacksPaginated(serverId, offset, limit);
+  async readAllFeedback(
+    agentId: string | number,
+    clientAddresses: string[] = [],
+    tag1: string = '',
+    tag2: string = '',
+    includeRevoked: boolean = false
+  ): Promise<{
+    clients: string[];
+    feedbackIndexes: bigint[];
+    values: bigint[];
+    valueDecimals: number[];
+    tag1s: string[];
+    tag2s: string[];
+    revokedStatuses: boolean[];
+  }> {
+    const res = await this.contract.readAllFeedback(
+      agentId,
+      clientAddresses,
+      tag1,
+      tag2,
+      includeRevoked
+    );
     return {
-      feedbacks: res[0].map((f: any) => ({
-        clientId: f[0].toString(),
-        serverId: f[1].toString(),
-        score: Number(f[2]),
-        dataHash: f[3],
-        timestamp: f[4].toString(),
-        exists: f[5],
-      })),
-      total: Number(res[1]),
+      clients: res[0],
+      feedbackIndexes: res[1],
+      values: res[2],
+      valueDecimals: res[3].map(Number),
+      tag1s: res[4],
+      tag2s: res[5],
+      revokedStatuses: res[6],
     };
   }
 
   /**
-   * Get reputation statistics for a server agent
-   * @param serverId Token ID of the server agent
-   * @returns Aggregated reputation statistics
+   * Get response count for a feedback
+   * @param agentId Token ID of the agent
+   * @param clientAddress Address of the client (0x0 for all)
+   * @param feedbackIndex Index of the feedback (0 for all)
+   * @param responders Filter by specific responders
+   * @returns Count of responses
    */
-  async getReputationStats(serverId: string | number): Promise<ReputationStats> {
-    const stats = await this.contract.getReputationStats(serverId);
-    return {
-      totalFeedback: stats[0].toString(),
-      averageScore: stats[1].toString(),
-      totalScore: stats[2].toString(),
-      lastUpdated: stats[3].toString(),
-    };
+  async getResponseCount(
+    agentId: string | number,
+    clientAddress: string = '0x0000000000000000000000000000000000000000',
+    feedbackIndex: number = 0,
+    responders: string[] = []
+  ): Promise<bigint> {
+    return await this.contract.getResponseCount(agentId, clientAddress, feedbackIndex, responders);
   }
 
   /**
-   * Get average reputation score for a server agent
-   * @param serverId Token ID of the server agent
-   * @returns Object with averageScore and feedbackCount
+   * Get all clients who have given feedback to an agent
+   * @param agentId Token ID of the agent
+   * @returns Array of client addresses
    */
-  async getAverageScore(serverId: string | number): Promise<{ averageScore: number; feedbackCount: number }> {
-    const res = await this.contract.getAverageScore(serverId);
-    return {
-      averageScore: Number(res[0]),
-      feedbackCount: Number(res[1]),
-    };
+  async getClients(agentId: string | number): Promise<string[]> {
+    return await this.contract.getClients(agentId);
   }
 
   /**
-   * Get reputation score with confidence level
-   * @param serverId Token ID of the server agent
-   * @returns Object with score, confidence, and feedbackCount
+   * Get contract version
    */
-  async getScoreWithConfidence(
-    serverId: string | number
-  ): Promise<{ score: number; confidence: number; feedbackCount: number }> {
-    const res = await this.contract.getScoreWithConfidence(serverId);
-    return {
-      score: Number(res[0]),
-      confidence: Number(res[1]),
-      feedbackCount: Number(res[2]),
-    };
+  async getVersion(): Promise<string> {
+    return await this.contract.getVersion();
   }
 
   /**
-   * Get total feedback count across all agents
-   * @returns Total number of feedback entries
+   * Get the raw contract instance for advanced usage
    */
-  async getTotalFeedbackCount(): Promise<number> {
-    const count = await this.contract.getTotalFeedbackCount();
-    return Number(count);
+  getContract(): Contract {
+    return this.contract;
   }
 }
+
+// Re-export for convenience
+export { ReputationRegistryClientV2 as ReputationV2 };

@@ -11,6 +11,7 @@ export interface NetworkConfig {
     identityRegistry?: string;
     reputationRegistry?: string;
     validationRegistry?: string;
+    validationPlugin?: string; // v0.2 only
   };
   x402?: {
     facilitatorUrl: string;
@@ -21,10 +22,22 @@ export interface NetworkConfig {
   };
 }
 
+import { Signer, Provider } from 'ethers';
+import { WalletConfig } from './wallet/types';
+
 export interface AgentSDKConfig {
-  privateKey?: string; // Optional - or caller can pass Wallet
+  // Network configuration
   networks: Record<string, NetworkConfig>;
   defaultNetwork?: SupportedNetwork;
+  
+  // PRIMARY OPTION: Wallet Configuration (for SDK to manage)
+  wallet?: WalletConfig;
+
+  // ALTERNATIVE OPTION: Bring your own signer/provider
+  signer?: Signer;
+  
+  // Optional: Provider (or derive from signer)
+  provider?: Provider;
 }
 
 // x402 Types (chain-agnostic)

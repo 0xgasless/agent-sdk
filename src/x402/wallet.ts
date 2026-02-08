@@ -1,9 +1,9 @@
-import { Wallet, TypedDataDomain } from 'ethers';
+import { Signer, TypedDataDomain } from 'ethers';
 import { PaymentRequirements, PaymentPayload, Authorization, NetworkConfig } from '../types';
 
 export async function createPaymentPayload(
   requirements: PaymentRequirements,
-  wallet: Wallet,
+  signer: Signer,
   networkCfg: NetworkConfig
 ): Promise<PaymentPayload> {
   const now = Math.floor(Date.now() / 1000);
@@ -13,8 +13,11 @@ export async function createPaymentPayload(
   crypto.getRandomValues(nonceBytes);
   const nonce = '0x' + Array.from(nonceBytes).map(b => b.toString(16).padStart(2, '0')).join('');
 
+  // Get address from signer (works with any Signer type)
+  const fromAddress = await signer.getAddress();
+
   const authorization: Authorization = {
-    from: wallet.address,
+    from: fromAddress,
     to: requirements.payTo,
     value: requirements.maxAmountRequired,
     validAfter: 0,
@@ -40,7 +43,7 @@ export async function createPaymentPayload(
     ]
   } as const;
 
-  const signature = await wallet.signTypedData(domain, types as any, authorization as any);
+  const signature = await signer.signTypedData(domain, types as any, authorization as any);
 
   return {
     x402Version: 1,

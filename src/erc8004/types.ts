@@ -1,12 +1,15 @@
-export interface AgentProfile {
-  id: string;
-  domain?: string;
+/**
+ * ERC-8004 v0.2 Types
+ */
+
+// Identity types
+export interface AgentInfo {
+  agentId: string;
   owner: string;
-  metadataURI?: string;
+  agentURI: string;
+  verifiedWallet?: string;
 }
 
-// Re-export types from reputation and validation clients
-export type { ReputationStats, Feedback } from './reputation';
-export type { ValidatorInfo, ValidationRequest } from './validation';
-
-
+// Re-export types from v0.2 clients
+export type { FeedbackV2 } from './reputation';
+export type { ValidatorInfoV2, ValidationRequestV2, EconomicModel } from './validation';

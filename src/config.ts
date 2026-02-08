@@ -21,5 +21,3 @@ export class NetworkRegistry {
     return cfg;
   }
 }
-
-

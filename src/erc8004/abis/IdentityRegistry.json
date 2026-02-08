@@ -6,58 +6,13 @@
   },
   {
     "type": "function",
-    "name": "MAX_DOMAIN_LENGTH",
+    "name": "UPGRADE_INTERFACE_VERSION",
     "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "MIN_DOMAIN_LENGTH",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "REGISTRATION_FEE",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "agentExists",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "exists",
-        "type": "bool",
-        "internalType": "bool"
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "stateMutability": "view"
@@ -101,47 +56,62 @@
   },
   {
     "type": "function",
-    "name": "getAgent",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
+    "name": "eip712Domain",
+    "inputs": [],
     "outputs": [
       {
-        "name": "agentId",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "fields",
+        "type": "bytes1",
+        "internalType": "bytes1"
       },
       {
-        "name": "agentDomain",
+        "name": "name",
         "type": "string",
         "internalType": "string"
       },
       {
-        "name": "agentAddress",
+        "name": "version",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "chainId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "verifyingContract",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "agentCardURI",
-        "type": "string",
-        "internalType": "string"
+        "name": "salt",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "extensions",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "getAgentCount",
-    "inputs": [],
-    "outputs": [
+    "name": "getAgentWallet",
+    "inputs": [
       {
-        "name": "count",
+        "name": "agentId",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -167,54 +137,47 @@
   },
   {
     "type": "function",
-    "name": "getDomain",
+    "name": "getMetadata",
     "inputs": [
       {
-        "name": "tokenId",
+        "name": "agentId",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "metadataKey",
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "outputs": [
       {
-        "name": "domain",
-        "type": "string",
-        "internalType": "string"
+        "name": "",
+        "type": "bytes",
+        "internalType": "bytes"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "getLockedBalance",
+    "name": "getVersion",
     "inputs": [],
     "outputs": [
       {
-        "name": "balance",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getTokenIdByDomain",
-    "inputs": [
-      {
-        "name": "agentDomain",
+        "name": "",
         "type": "string",
         "internalType": "string"
       }
     ],
-    "outputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "initialize",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -242,17 +205,22 @@
   },
   {
     "type": "function",
-    "name": "isDomainAvailable",
+    "name": "isAuthorizedOrOwner",
     "inputs": [
       {
-        "name": "agentDomain",
-        "type": "string",
-        "internalType": "string"
+        "name": "spender",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
       {
-        "name": "available",
+        "name": "",
         "type": "bool",
         "internalType": "bool"
       }
@@ -271,30 +239,6 @@
       }
     ],
     "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "newAgent",
-    "inputs": [
-      {
-        "name": "agentDomain",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "agentCardURI",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "payable"
   },
   {
     "type": "function",
@@ -330,58 +274,91 @@
   },
   {
     "type": "function",
-    "name": "renounceOwnership",
+    "name": "proxiableUUID",
     "inputs": [],
-    "outputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "register",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "resolveByAddress",
+    "name": "register",
     "inputs": [
       {
-        "name": "agentAddress",
-        "type": "address",
-        "internalType": "address"
+        "name": "agentURI",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "metadata",
+        "type": "tuple[]",
+        "internalType": "struct IdentityRegistryUpgradeable.MetadataEntry[]",
+        "components": [
+          {
+            "name": "metadataKey",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "metadataValue",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
       }
     ],
     "outputs": [
       {
-        "name": "tokenIds",
-        "type": "uint256[]",
-        "internalType": "uint256[]"
+        "name": "agentId",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
-    "stateMutability": "view"
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "resolveByDomain",
+    "name": "register",
     "inputs": [
       {
-        "name": "agentDomain",
+        "name": "agentURI",
         "type": "string",
         "internalType": "string"
       }
     ],
     "outputs": [
       {
-        "name": "tokenId",
+        "name": "agentId",
         "type": "uint256",
         "internalType": "uint256"
-      },
-      {
-        "name": "agentAddress",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "agentCardURI",
-        "type": "string",
-        "internalType": "string"
       }
     ],
-    "stateMutability": "view"
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "renounceOwnership",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -436,6 +413,52 @@
   },
   {
     "type": "function",
+    "name": "setAgentURI",
+    "inputs": [
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "newURI",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setAgentWallet",
+    "inputs": [
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "newWallet",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "signature",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setApprovalForAll",
     "inputs": [
       {
@@ -447,6 +470,29 @@
         "name": "approved",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setMetadata",
+    "inputs": [
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "metadataKey",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "metadataValue",
+        "type": "bytes",
+        "internalType": "bytes"
       }
     ],
     "outputs": [],
@@ -486,30 +532,6 @@
   },
   {
     "type": "function",
-    "name": "tokenOfOwnerByIndex",
-    "inputs": [
-      {
-        "name": "owner",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "index",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "tokenURI",
     "inputs": [
       {
@@ -523,19 +545,6 @@
         "name": "",
         "type": "string",
         "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "totalFeesCollected",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -578,107 +587,34 @@
   },
   {
     "type": "function",
-    "name": "updateAgent",
+    "name": "unsetAgentWallet",
     "inputs": [
       {
-        "name": "tokenId",
+        "name": "agentId",
         "type": "uint256",
         "internalType": "uint256"
-      },
-      {
-        "name": "newAgentDomain",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "newAgentCardURI",
-        "type": "string",
-        "internalType": "string"
       }
     ],
-    "outputs": [
-      {
-        "name": "success",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "version",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "stateMutability": "pure"
-  },
-  {
-    "type": "event",
-    "name": "AgentRegistered",
+    "name": "upgradeToAndCall",
     "inputs": [
       {
-        "name": "tokenId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "domain",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      },
-      {
-        "name": "owner",
+        "name": "newImplementation",
         "type": "address",
-        "indexed": true,
         "internalType": "address"
       },
       {
-        "name": "agentCardURI",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
+        "name": "data",
+        "type": "bytes",
+        "internalType": "bytes"
       }
     ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "AgentUpdated",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "newDomain",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      },
-      {
-        "name": "owner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "newAgentCardURI",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      }
-    ],
-    "anonymous": false
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
     "type": "event",
@@ -751,25 +687,50 @@
   },
   {
     "type": "event",
-    "name": "DomainChanged",
+    "name": "EIP712DomainChanged",
+    "inputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Initialized",
     "inputs": [
       {
-        "name": "tokenId",
+        "name": "version",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MetadataSet",
+    "inputs": [
+      {
+        "name": "agentId",
         "type": "uint256",
         "indexed": true,
         "internalType": "uint256"
       },
       {
-        "name": "oldDomain",
+        "name": "indexedMetadataKey",
+        "type": "string",
+        "indexed": true,
+        "internalType": "string"
+      },
+      {
+        "name": "metadataKey",
         "type": "string",
         "indexed": false,
         "internalType": "string"
       },
       {
-        "name": "newDomain",
-        "type": "string",
+        "name": "metadataValue",
+        "type": "bytes",
         "indexed": false,
-        "internalType": "string"
+        "internalType": "bytes"
       }
     ],
     "anonymous": false
@@ -808,6 +769,31 @@
   },
   {
     "type": "event",
+    "name": "Registered",
+    "inputs": [
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "agentURI",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "Transfer",
     "inputs": [
       {
@@ -832,33 +818,68 @@
     "anonymous": false
   },
   {
-    "type": "error",
-    "name": "AgentNotFound",
-    "inputs": []
+    "type": "event",
+    "name": "URIUpdated",
+    "inputs": [
+      {
+        "name": "agentId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "newURI",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "updatedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Upgraded",
+    "inputs": [
+      {
+        "name": "implementation",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
   },
   {
     "type": "error",
-    "name": "DomainAlreadyRegistered",
-    "inputs": []
+    "name": "AddressEmptyCode",
+    "inputs": [
+      {
+        "name": "target",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
   },
   {
     "type": "error",
-    "name": "DomainAlreadyUsed",
-    "inputs": []
+    "name": "ERC1967InvalidImplementation",
+    "inputs": [
+      {
+        "name": "implementation",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
   },
   {
     "type": "error",
-    "name": "DomainTooLong",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "DomainTooShort",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "DomainUnchanged",
+    "name": "ERC1967NonPayable",
     "inputs": []
   },
   {
@@ -966,17 +987,17 @@
   },
   {
     "type": "error",
-    "name": "InsufficientFee",
+    "name": "FailedCall",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "InvalidDomain",
+    "name": "InvalidInitialization",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "InvalidURI",
+    "name": "NotInitializing",
     "inputs": []
   },
   {
@@ -1003,12 +1024,18 @@
   },
   {
     "type": "error",
-    "name": "ReentrancyGuardReentrantCall",
+    "name": "UUPSUnauthorizedCallContext",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "UnauthorizedUpdate",
-    "inputs": []
+    "name": "UUPSUnsupportedProxiableUUID",
+    "inputs": [
+      {
+        "name": "slot",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ]
   }
 ]

@@ -16,7 +16,7 @@
 
 const FACILITATOR_URL = ((typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_X402_FACILITATOR_URL) as string)
   || process.env.X402_FACILITATOR_URL 
-  || 'http://testnet.0xgasless.com';
+  || 'https://testnet.0xgasless.com';
 
 const DEFAULT_TOKEN = ((typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_DEFAULT_TOKEN) as string)
   || process.env.DEFAULT_TOKEN 

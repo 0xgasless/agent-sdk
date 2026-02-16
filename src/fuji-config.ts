@@ -16,9 +16,13 @@
  * - ValidationPlugin: 0x83dab1f7be37c5c4b84743b72642c9651de7f12b
  */
 
-const FACILITATOR_URL = ((typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_X402_FACILITATOR_URL) as string)
+// x402 Facilitator URLs
+// Testnet: https://testnet.0xgasless.com
+// Mainnet: https://x402.0xgasless.com
+const TESTNET_FACILITATOR_URL = ((typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_X402_FACILITATOR_URL) as string)
   || process.env.X402_FACILITATOR_URL 
-  || 'http://testnet.0xgasless.com';
+  || 'https://testnet.0xgasless.com';
+const MAINNET_FACILITATOR_URL = 'https://x402.0xgasless.com';
 
 const DEFAULT_TOKEN = ((typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_DEFAULT_TOKEN) as string)
   || process.env.DEFAULT_TOKEN 
@@ -45,7 +49,7 @@ export const fujiNetworkConfig = {
   rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
   erc8004: ERC8004_V2,
   x402: {
-    facilitatorUrl: FACILITATOR_URL,
+    facilitatorUrl: TESTNET_FACILITATOR_URL,
     defaultToken: DEFAULT_TOKEN,
     domainName: 'A402',
     domainVersion: '1',
@@ -84,7 +88,7 @@ export const mainnetNetworkConfig = {
   rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
   erc8004: ERC8004_V2_MAINNET,
   x402: {
-    facilitatorUrl: 'https://x402.0xgasless.com',
+    facilitatorUrl: MAINNET_FACILITATOR_URL,
     defaultToken: MAINNET_TOKENS.USDC,
     supportedTokens: MAINNET_TOKENS,
     domainName: 'A402',

@@ -212,7 +212,7 @@ Links your on-chain identity to your social presence.
 
 | Component | Value |
 |-----------|-------|
-| Facilitator URL | `http://testnet.0xgasless.com` |
+| Facilitator URL | `https://testnet.0xgasless.com` |
 | Relayer Contract | [`0x8BD697733c31293Be2327026d01aE393Ab2675C4`](https://testnet.snowtrace.io/address/0x8BD697733c31293Be2327026d01aE393Ab2675C4) |
 
 ---

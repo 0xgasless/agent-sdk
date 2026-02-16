@@ -299,7 +299,7 @@ The **Agent SDK** is a universal, chain-agnostic toolkit that enables developers
 
 ### x402 Configuration (Fuji Testnet)
 
-- **Facilitator URL**: `http://testnet.0xgasless.com`
+- **Facilitator URL**: `https://testnet.0xgasless.com`
 - **Relayer Contract**: `0x8BD697733c31293Be2327026d01aE393Ab2675C4`
 - **Default Token (USDT)**: `0x40dAE5db31DD56F1103Dd9153bd806E00A2f07BA`
 - **EIP-712 Domain**:
@@ -322,7 +322,7 @@ export const fujiConfig: AgentSDKConfig = {
       rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
       erc8004: ERC8004_V2, // or ERC8004_V1 for legacy
       x402: {
-        facilitatorUrl: 'http://testnet.0xgasless.com',
+        facilitatorUrl: 'https://testnet.0xgasless.com',
         defaultToken: '0x40dAE5db31DD56F1103Dd9153bd806E00A2f07BA',
         domainName: 'A402',
         domainVersion: '1',
@@ -839,7 +839,7 @@ The frontend demo includes detailed logging for:
 - **Contracts Repository**: `agent-sdk-contracts/`
 - **Frontend Demo**: `agent-frontend-demo/`
 - **Deployed Contracts**: [Snowtrace Fuji Testnet](https://testnet.snowscan.xyz/)
-- **x402 Facilitator**: `http://testnet.0xgasless.com`
+- **x402 Facilitator**: `https://testnet.0xgasless.com`
 
 ---
 

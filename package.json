@@ -1,6 +1,6 @@
 {
   "name": "@0xgasless/agent-sdk",
-  "version": "0.1.1-dev",
+  "version": "0.1.2",
   "description": "Universal Agent SDK combining ERC-8004 identity/reputation with x402 gasless payments across chains",
   "main": "dist/index.js",
   "module": "dist/index.js",

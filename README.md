@@ -217,6 +217,32 @@ Links your on-chain identity to your social presence.
 
 ---
 
+### TRON (via M2M TRC-8004 Registry)
+
+ERC-8004 registries are also deployed on TRON via the [M2M TRC-8004 Registry](https://m2mregistry.io).
+
+#### TRON Mainnet
+
+| Contract | Address |
+|----------|---------|
+| IdentityRegistry | [`THmfi8uJuUpTfUmYLDX7UD1KaE4P6HKgqA`](https://tronscan.org/#/contract/THmfi8uJuUpTfUmYLDX7UD1KaE4P6HKgqA) |
+| ReputationRegistry | [`TV8KWmp8qcj55sjs1NSjVxmRmZP7CYzNxH`](https://tronscan.org/#/contract/TV8KWmp8qcj55sjs1NSjVxmRmZP7CYzNxH) |
+| ValidationRegistry | [`TCoJA4BYXWZhp5eanCchMw67VA83tQ83n1`](https://tronscan.org/#/contract/TCoJA4BYXWZhp5eanCchMw67VA83tQ83n1) |
+| IncidentRegistry | [`TJ26Pu24ar7Qdh9Bm6tbBVdtzCJkbxS5eR`](https://tronscan.org/#/contract/TJ26Pu24ar7Qdh9Bm6tbBVdtzCJkbxS5eR) |
+
+#### TRON Shasta Testnet
+
+| Contract | Address |
+|----------|---------|
+| IdentityRegistry | [`TFKNqk9bjwWp5uRiiGimqfLhVQB8jSxYi7`](https://shasta.tronscan.org/#/contract/TFKNqk9bjwWp5uRiiGimqfLhVQB8jSxYi7) |
+| ReputationRegistry | [`TRaYogyr2qc7WgsmuVF5Js39aCmoG7vZrA`](https://shasta.tronscan.org/#/contract/TRaYogyr2qc7WgsmuVF5Js39aCmoG7vZrA) |
+| ValidationRegistry | [`TPgGWWyUdxNryUCN49TdT4b3F4WB3Edr16`](https://shasta.tronscan.org/#/contract/TPgGWWyUdxNryUCN49TdT4b3F4WB3Edr16) |
+| IncidentRegistry | [`TPB59NFdypBpkJtWH7yE8XenKrdT1Q4g4s`](https://shasta.tronscan.org/#/contract/TPB59NFdypBpkJtWH7yE8XenKrdT1Q4g4s) |
+
+> **Note:** TRON uses TronWeb instead of ethers.js. For TRON integration, use the [M2M Python SDK](https://github.com/M2M-TRC8004-Registry/trc8004-m2m-sdk) (`pip install trc8004-m2m`).
+
+---
+
 ## 📖 SDK Reference
 
 ### Core SDK

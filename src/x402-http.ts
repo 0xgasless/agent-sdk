@@ -55,6 +55,21 @@ export interface PayFetchOptions {
   chains?: Chain[];
   /** Extra fetch options for both the probe and the paid retry. */
   init?: RequestInit;
+  /**
+   * Optional fail-closed authorization hook invoked after a payable requirement
+   * is selected and validated, but before the KMS signing request is made.
+   * Throw or reject to stop the payment.
+   */
+  beforePayment?: (context: PayFetchAuthorizationContext) => void | Promise<void>;
+}
+
+/** Exact public payment context supplied to {@link PayFetchOptions.beforePayment}. */
+export interface PayFetchAuthorizationContext {
+  url: string;
+  agentId: string;
+  requirement: X402Requirement;
+  chain: Chain;
+  tokenSymbol: string;
 }
 
 export interface PayFetchResult {

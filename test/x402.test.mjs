@@ -182,6 +182,54 @@ test('payFetch: maxValue guard refuses over-priced requirements', async () => {
   );
 });
 
+test('payFetch: beforePayment receives the selected requirement before signing', async () => {
+  const seen = [];
+  const { client, calls } = makeClient([
+    ['/v1/agent/x402/sign', () => json(200, SIGNED_EVM)],
+    ['merchant.example', (url, init) => {
+      const headers = new Headers(init.headers);
+      return headers.get('X-PAYMENT')
+        ? json(200, { data: 'paid content' })
+        : json(402, MERCHANT_402);
+    }],
+  ]);
+
+  const { response } = await client.x402.payFetch('https://merchant.example/data', {
+    agentId: 'bot-1',
+    beforePayment: async (context) => { seen.push(context); },
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0].url, 'https://merchant.example/data');
+  assert.equal(seen[0].agentId, 'bot-1');
+  assert.equal(seen[0].chain, 'avalanche-fuji');
+  assert.equal(seen[0].tokenSymbol, 'USDC');
+  assert.deepEqual(seen[0].requirement, MERCHANT_402.accepts[0]);
+  assert.ok(calls.find((c) => c.url.includes('/v1/agent/x402/sign')));
+});
+
+test('payFetch: beforePayment rejection fails closed before signing or retry', async () => {
+  let merchantHits = 0;
+  const { client, calls } = makeClient([
+    ['merchant.example', () => {
+      merchantHits++;
+      return json(402, MERCHANT_402);
+    }],
+  ]);
+
+  await assert.rejects(
+    () => client.x402.payFetch('https://merchant.example/data', {
+      agentId: 'bot-1',
+      beforePayment: async () => { throw new Error('owner policy denied payment'); },
+    }),
+    /owner policy denied payment/,
+  );
+
+  assert.equal(merchantHits, 1);
+  assert.equal(calls.some((c) => c.url.includes('/v1/agent/x402/sign')), false);
+});
+
 test('payFetch: unpayable requirements produce a clear error', async () => {
   const unpayable = { accepts: [{ network: 'eip155:1', asset: '0xdead', payTo: '0xA', maxAmountRequired: '1' }] };
   const { client } = makeClient([['merchant.example', () => json(402, unpayable)]]);

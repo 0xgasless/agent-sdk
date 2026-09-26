@@ -25,6 +25,7 @@ export {
 export type {
   X402Envelope,
   X402Requirement,
+  PayFetchAuthorizationContext,
   PayFetchOptions,
   PayFetchResult,
 } from './x402-http.js';

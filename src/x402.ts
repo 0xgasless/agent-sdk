@@ -104,6 +104,14 @@ export class X402Api {
       );
     }
 
+    await opts.beforePayment?.({
+      url,
+      agentId: opts.agentId,
+      requirement,
+      chain,
+      tokenSymbol,
+    });
+
     const validBefore = Math.floor(Date.now() / 1000) +
       Math.min(requirement.maxTimeoutSeconds ?? 300, 3600);
     const signed = await this.sign({

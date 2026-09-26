@@ -136,6 +136,21 @@ const { response, payment } = await client.x402.payFetch(
 const data = await response.json();
 ```
 
+For an owner approval service, risk engine, or destination allowlist, use the
+optional fail-closed hook. It runs after the SDK selects and validates the
+merchant requirement and before it requests a KMS signature:
+
+```ts
+const { response } = await client.x402.payFetch(url, {
+  agentId: 'bot-1',
+  maxValue: '1000000',
+  beforePayment: async ({ url, agentId, requirement, chain, tokenSymbol }) => {
+    await authorize({ url, agentId, requirement, chain, tokenSymbol });
+    // Throw or reject to stop before signing.
+  },
+});
+```
+
 Notes:
 - Non-402 responses pass straight through (no payment, `payment` is undefined).
 - The merchant picks the requirement list; `payFetch` selects the first entry
